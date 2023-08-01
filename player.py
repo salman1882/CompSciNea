@@ -9,9 +9,19 @@ class Player:
         self.width = width
         self.height = height
 
-    def move(self, dx, dy):
-        self.x += dx * self.speed
-        self.y += dy * self.speed
+    def move(self, dx, dy, walls):
+        new_x = self.x + dx * self.speed
+        new_y = self.y + dy * self.speed
+        new_rect = pygame.Rect(new_x, new_y, self.width, self.height)
+
+        # Check for collisions
+        for i in walls:
+            if new_rect.colliderect(i):
+                return  
+
+        # If there are no collisions update pos
+        self.x = new_x
+        self.y = new_y
 
     def draw(self, screen):
         pygame.draw.rect(screen, (255), pygame.Rect(self.x, self.y, self.width, self.height))

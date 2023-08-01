@@ -8,21 +8,28 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 # Initialize a player
 player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, 1, TILE_SIZE, TILE_SIZE)
 
+walls = []
+for i in range(len(MAP)):
+    for j in range(len(MAP[i])):
+        if MAP[i][j] == 'x':
+            walls.append(pygame.Rect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE))
+ 
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
+
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
-        player.move(-1, 0)
+        player.move(-1, 0, walls)
     if keys[pygame.K_RIGHT]:
-        player.move(1, 0)
+        player.move(1, 0, walls)
     if keys[pygame.K_UP]:
-        player.move(0, -1)
+        player.move(0, -1, walls)
     if keys[pygame.K_DOWN]:
-        player.move(0, 1)
+        player.move(0, 1, walls)
 
     # Draw grid
     screen.fill((0))
@@ -32,13 +39,8 @@ while running:
             pygame.draw.rect(screen, (255, 255, 255), rect, 1)
 
     # Check for collisions and draw map
-    for i, row in enumerate(MAP):
-        for j, tile in enumerate(row):
-            if tile == 'x':  # wall
-                wall_rect = pygame.Rect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE)
-                pygame.draw.rect(screen, (255, 0, 0), wall_rect)  # Draw red wall
-                if player.collides_with(wall_rect):
-                    print("Collision!")
+    for wall in walls:
+        pygame.draw.rect(screen, (255, 0, 0), wall)
 
     # Draw player
     player.draw(screen)
