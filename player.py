@@ -1,3 +1,4 @@
+
 import pygame
 from settings import TILE_SIZE
 
@@ -6,22 +7,30 @@ class Player:
         self.x = x
         self.y = y
         self.speed = speed
-        self.width = width
-        self.height = height
+        self.width = width 
+        self.height = height  
+        self.direction = 'right' 
 
     def move(self, dx, dy, walls):
         new_x = self.x + dx * self.speed
         new_y = self.y + dy * self.speed
-        new_rect = pygame.Rect(new_x, new_y, self.width, self.height)
+        new_rect = pygame.Rect(new_x + (100 - self.width) // 2, new_y + (100 - self.height) // 2, self.width, self.height)
 
-        # Check for collisions
+        if dx > 0: self.direction = 'right'
+        elif dx < 0: self.direction = 'left'
+        elif dy > 0: self.direction = 'down'
+        elif dy < 0: self.direction = 'up'
+
+        collision = False
         for i in walls:
             if new_rect.colliderect(i):
-                return  
+                collision = True
+                break
 
         # If there are no collisions update pos
-        self.x = new_x
-        self.y = new_y
+        if not collision:
+            self.x = new_x
+            self.y = new_y
 
     def draw(self, screen):
         pygame.draw.rect(screen, (255), pygame.Rect(self.x, self.y, self.width, self.height))
