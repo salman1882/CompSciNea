@@ -24,7 +24,7 @@ class Player:
         collision = False
         for i in walls:
             if new_rect.colliderect(i):
-                collision = True
+                collision = False
                 break
 
         # If there are no collisions update pos
