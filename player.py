@@ -1,6 +1,7 @@
-
 import pygame
 from settings import TILE_SIZE
+
+attack_Cooldown = 300     #in MS
 
 class Player:
     def __init__(self, x, y, speed, width, height):
@@ -10,8 +11,19 @@ class Player:
         self.width = width 
         self.height = height  
         self.direction = 'right' 
+        self.is_attacking = False
+        self.attack_start_time = None
 
+    
     def handle_movement(self, keys, walls):
+        if self.is_attacking:
+            return
+
+        # Check for spacebar press to trigger attack state
+        if keys[pygame.K_SPACE] and not self.is_attacking:
+            self.is_attacking = True
+            self.attack_start_time = pygame.time.get_ticks()
+
         if keys[pygame.K_a]:
             self.move(-10, 0, walls)
         if keys[pygame.K_d]:

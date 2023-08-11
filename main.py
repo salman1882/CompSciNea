@@ -1,8 +1,8 @@
 import pygame
 import spritesheet
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE, MAP
-from player import Player
-#IMPORTANT, fix sprite continous running and movement speed higher on diag
+from player import *
+#IMPORTANT, fix sprite continous running and movement speed higher on diag, cooldown between attacks
 
 
 pygame.init()
@@ -31,6 +31,26 @@ for x in range(16, 24):
 for x in range(24, 32):
     animations['up'].append(sprite_sheet.get_image(x, 100, 100, BLACK))
 
+# Load attack images
+attack_images = {
+    'right': pygame.image.load('sprites/rightattack.PNG').convert_alpha(),
+    'down': pygame.image.load('sprites/downattack.PNG').convert_alpha(),
+    'left': pygame.image.load('sprites/leftattack.PNG').convert_alpha(),
+    'up': pygame.image.load('sprites/upattack.PNG').convert_alpha()
+}
+
+
+
+attack_start_time = 0
+# Load sword images
+sword_images = {
+    'right': pygame.image.load('sprites/rightsword.PNG').convert_alpha(),
+    'down': pygame.image.load('sprites/downsword.PNG').convert_alpha(),
+    'left': pygame.image.load('sprites/leftsword.PNG').convert_alpha(),
+    'up': pygame.image.load('sprites/upsword.PNG').convert_alpha()
+}
+ime = 0
+
 # Initialize a player
 player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, 1, TILE_SIZE, TILE_SIZE)
 
@@ -57,15 +77,15 @@ while running:
 
     keys = pygame.key.get_pressed()
     player.handle_movement(keys, walls)
+
+    if player.is_attacking:
+        if pygame.time.get_ticks() - player.attack_start_time > attack_Cooldown:
+            player.is_attacking = False
+
     
     # Calculate camera offset
     camera_offset_x, camera_offset_y = calculate_camera_offset(player, SCREEN_WIDTH, SCREEN_HEIGHT)
     screen.fill((0))
-
-    for x in range(0, SCREEN_WIDTH, TILE_SIZE):
-        for y in range(0, SCREEN_HEIGHT, TILE_SIZE):
-            rect = pygame.Rect(x, y, TILE_SIZE, TILE_SIZE)
-            pygame.draw.rect(screen, (255, 255, 255), rect, 1)
 
     current_time = pygame.time.get_ticks()
     if current_time - last_update >= animation_cooldown:
@@ -81,7 +101,16 @@ while running:
     
     screen.blit(water, (camera_offset_x - 2000, camera_offset_y - 1100))
     screen.blit(background_image, (camera_offset_x, camera_offset_y))
-    screen.blit(animations[player.direction][frame], (player.x + camera_offset_x, player.y + camera_offset_y))
+    
+    if player.is_attacking:
+        screen.blit(attack_images[player.direction], (player.x + camera_offset_x, player.y + camera_offset_y))
+
+        # Displaying the sword image during attack
+        screen.blit(sword_images[player.direction], (player.x + camera_offset_x, player.y + camera_offset_y))
+        
+    else:
+        screen.blit(animations[player.direction][frame], (player.x + camera_offset_x, player.y + camera_offset_y))
+
     
     
     fps = clock.get_fps()
