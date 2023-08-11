@@ -11,6 +11,16 @@ class Player:
         self.height = height  
         self.direction = 'right' 
 
+    def handle_movement(self, keys, walls):
+        if keys[pygame.K_a]:
+            self.move(-10, 0, walls)
+        if keys[pygame.K_d]:
+            self.move(10, 0, walls)
+        if keys[pygame.K_w]:
+            self.move(0, -10, walls)
+        if keys[pygame.K_s]:
+            self.move(0, 10, walls)
+
     def move(self, dx, dy, walls):
         new_x = self.x + dx * self.speed
         new_y = self.y + dy * self.speed

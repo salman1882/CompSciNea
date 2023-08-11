@@ -2,6 +2,8 @@ import pygame
 import spritesheet
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE, MAP
 from player import Player
+#IMPORTANT, fix sprite continous running and movement speed higher on diag
+
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -54,16 +56,7 @@ while running:
             running = False
 
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_a]:
-        player.move(-10, 0, walls)
-    if keys[pygame.K_d]:
-        player.move(10, 0, walls)
-    if keys[pygame.K_w]:
-        player.move(0, -10, walls)
-    if keys[pygame.K_s]:
-        player.move(0, 10, walls)
-
-    # Draw grid
+    player.handle_movement(keys, walls)
     
     # Calculate camera offset
     camera_offset_x, camera_offset_y = calculate_camera_offset(player, SCREEN_WIDTH, SCREEN_HEIGHT)
