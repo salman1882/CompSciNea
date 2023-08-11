@@ -54,13 +54,13 @@ while running:
             running = False
 
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT]:
+    if keys[pygame.K_a]:
         player.move(-10, 0, walls)
-    if keys[pygame.K_RIGHT]:
+    if keys[pygame.K_d]:
         player.move(10, 0, walls)
-    if keys[pygame.K_UP]:
+    if keys[pygame.K_w]:
         player.move(0, -10, walls)
-    if keys[pygame.K_DOWN]:
+    if keys[pygame.K_s]:
         player.move(0, 10, walls)
 
     # Draw grid
@@ -81,12 +81,15 @@ while running:
         if frame >= 8:
             frame = 0
 
+
+
     for wall in walls:
         pygame.draw.rect(screen, (255, 0, 0), wall.move(camera_offset_x, camera_offset_y))
     
     screen.blit(water, (camera_offset_x - 2000, camera_offset_y - 1100))
     screen.blit(background_image, (camera_offset_x, camera_offset_y))
     screen.blit(animations[player.direction][frame], (player.x + camera_offset_x, player.y + camera_offset_y))
+    
     
     fps = clock.get_fps()
     fps_surface = font.render(f"FPS: {fps:.2f}", True, pygame.Color('white'))

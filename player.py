@@ -14,7 +14,7 @@ class Player:
     def move(self, dx, dy, walls):
         new_x = self.x + dx * self.speed
         new_y = self.y + dy * self.speed
-        new_rect = pygame.Rect(new_x + (100 - self.width) // 2, new_y + (100 - self.height) // 2, self.width, self.height)
+        new_rect = pygame.Rect(new_x + (64 - self.width) // 2, new_y + (100 - self.height) // 2, self.width, self.height)
 
         if dx > 0: self.direction = 'right'
         elif dx < 0: self.direction = 'left'
@@ -24,7 +24,7 @@ class Player:
         collision = False
         for i in walls:
             if new_rect.colliderect(i):
-                collision = False
+                collision = True
                 break
 
         # If there are no collisions update pos
