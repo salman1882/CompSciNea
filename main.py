@@ -9,6 +9,9 @@ pygame.init()
 clock = pygame.time.Clock()
 font = pygame.font.Font(None, 30)
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+from camera import Camera
+camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
+
 
 # load sprites
 sprite_sheet_character = pygame.image.load('sprites/player.png').convert_alpha()
@@ -39,8 +42,6 @@ attack_images = {
     'up': pygame.image.load('sprites/upattack.PNG').convert_alpha()
 }
 
-
-
 attack_start_time = 0
 # Load sword images
 sword_images = {
@@ -49,7 +50,6 @@ sword_images = {
     'left': pygame.image.load('sprites/leftsword.PNG').convert_alpha(),
     'up': pygame.image.load('sprites/upsword.PNG').convert_alpha()
 }
-ime = 0
 
 # Initialize a player
 player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, 1, TILE_SIZE, TILE_SIZE)
@@ -65,10 +65,6 @@ frame = 0
 last_update = pygame.time.get_ticks()
 
 
-def calculate_camera_offset(target, screen_width, screen_height):
-    x = -target.x + screen_width // 2
-    y = -target.y + screen_height // 2
-    return x, y
 running = True
 while running:
     for event in pygame.event.get():
@@ -84,7 +80,7 @@ while running:
 
     
     # Calculate camera offset
-    camera_offset_x, camera_offset_y = calculate_camera_offset(player, SCREEN_WIDTH, SCREEN_HEIGHT)
+    camera.calculate_camera_offset(player)
     screen.fill((0))
 
     current_time = pygame.time.get_ticks()
@@ -97,19 +93,19 @@ while running:
 
 
     for wall in walls:
-        pygame.draw.rect(screen, (255, 0, 0), wall.move(camera_offset_x, camera_offset_y))
+        pygame.draw.rect(screen, (255, 0, 0), camera.apply_offset(wall))
     
-    screen.blit(water, (camera_offset_x - 2000, camera_offset_y - 1100))
-    screen.blit(background_image, (camera_offset_x, camera_offset_y))
+    camera.draw_with_offset(screen, water, (-2000, -1100))
+    camera.draw_with_offset(screen, background_image, (0, 0))
     
     if player.is_attacking:
-        screen.blit(attack_images[player.direction], (player.x + camera_offset_x, player.y + camera_offset_y))
+        camera.draw_with_offset(screen, attack_images[player.direction], (player.x, player.y))
 
         # Displaying the sword image during attack
-        screen.blit(sword_images[player.direction], (player.x + camera_offset_x, player.y + camera_offset_y))
+        camera.draw_with_offset(screen, sword_images[player.direction], (player.x, player.y))
         
     else:
-        screen.blit(animations[player.direction][frame], (player.x + camera_offset_x, player.y + camera_offset_y))
+        camera.draw_with_offset(screen, animations[player.direction][frame], (player.x, player.y))
 
     
     
