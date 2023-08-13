@@ -60,9 +60,6 @@ for i in range(len(MAP)):
         if MAP[i][j] == 'x':
             walls.append(pygame.Rect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE))
 
-animation_cooldown = 80
-frame = 0
-last_update = pygame.time.get_ticks()
 
 
 running = True
@@ -75,7 +72,7 @@ while running:
     player.handle_movement(keys, walls)
 
     if player.is_attacking:
-        if pygame.time.get_ticks() - player.attack_start_time > attack_Cooldown:
+        if pygame.time.get_ticks() - player.attack_start_time > Player.attack_Cooldown:
             player.is_attacking = False
 
     
@@ -83,12 +80,7 @@ while running:
     camera.calculate_camera_offset(player)
     screen.fill((0))
 
-    current_time = pygame.time.get_ticks()
-    if current_time - last_update >= animation_cooldown:
-        frame = frame + 1 
-        last_update = current_time
-        if frame >= 8:
-            frame = 0
+    player.update_animation()
 
 
 
@@ -105,7 +97,7 @@ while running:
         camera.draw_with_offset(screen, sword_images[player.direction], (player.x, player.y))
         
     else:
-        camera.draw_with_offset(screen, animations[player.direction][frame], (player.x, player.y))
+        camera.draw_with_offset(screen, animations[player.direction][player.frame], (player.x, player.y))
 
     
     

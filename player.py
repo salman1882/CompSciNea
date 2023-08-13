@@ -1,9 +1,10 @@
 import pygame
 from settings import TILE_SIZE
 
-attack_Cooldown = 300     #in MS
+     #in MS
 
 class Player:
+    attack_Cooldown = 300
     def __init__(self, x, y, speed, width, height):
         self.x = x
         self.y = y
@@ -13,6 +14,9 @@ class Player:
         self.direction = 'right' 
         self.is_attacking = False
         self.attack_start_time = None
+        self.animation_cooldown = 80
+        self.frame = 0
+        self.last_update = pygame.time.get_ticks()
 
     
     def handle_movement(self, keys, walls):
@@ -60,3 +64,11 @@ class Player:
     def collides_with(self, other_rect):
         player_rect = pygame.Rect(self.x, self.y, self.width, self.height)
         return player_rect.colliderect(other_rect)
+
+    def update_animation(self):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_update >= self.animation_cooldown:
+            self.frame = self.frame + 1 
+            self.last_update = current_time
+            if self.frame >= 8:
+                self.frame = 0
