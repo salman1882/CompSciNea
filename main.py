@@ -1,3 +1,6 @@
+
+# Create an instance of the Enemy class using the "ghost" image
+from enemy import Enemy
 import pygame
 import spritesheet
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE, MAP
@@ -33,7 +36,6 @@ for x in range(16, 24):
     animations['left'].append(sprite_sheet.get_image(x, 100, 100, BLACK))
 for x in range(24, 32):
     animations['up'].append(sprite_sheet.get_image(x, 100, 100, BLACK))
-
 # Load attack images
 attack_images = {
     'right': pygame.image.load('sprites/rightattack.PNG').convert_alpha(),
@@ -50,9 +52,13 @@ sword_images = {
     'left': pygame.image.load('sprites/leftsword.PNG').convert_alpha(),
     'up': pygame.image.load('sprites/upsword.PNG').convert_alpha()
 }
+ghost = pygame.image.load('sprites/ghost.png').convert_alpha()
 
 # Initialize a player
 player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, 1, TILE_SIZE, TILE_SIZE)
+
+# Initialize an enemy
+enemy_instance = Enemy(200, 200, 2, 75, 75, ghost)
 
 walls = []
 for i in range(len(MAP)):
@@ -72,7 +78,7 @@ while running:
     player.handle_movement(keys, walls)
 
     if player.is_attacking:
-        if pygame.time.get_ticks() - player.attack_start_time > Player.attack_Cooldown:
+        if pygame.time.get_ticks() - player.attack_start_time > Player.attack_cooldown:
             player.is_attacking = False
 
     
@@ -83,13 +89,13 @@ while running:
     player.update_animation()
 
 
-
+    # draws red walls where "X" is on tilemap
     for wall in walls:
         pygame.draw.rect(screen, (255, 0, 0), camera.apply_offset(wall))
     
     camera.draw_with_offset(screen, water, (-2000, -1100))
     camera.draw_with_offset(screen, background_image, (0, 0))
-    
+
     if player.is_attacking:
         camera.draw_with_offset(screen, attack_images[player.direction], (player.x, player.y))
 
@@ -104,6 +110,9 @@ while running:
     fps = clock.get_fps()
     fps_surface = font.render(f"FPS: {fps:.2f}", True, pygame.Color('white'))
     screen.blit(fps_surface, (10, 10))
+
+    # Draw the enemy to the screen
+    enemy_instance.draw(screen)
     
     pygame.display.update()
     clock.tick(60)
