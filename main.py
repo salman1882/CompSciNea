@@ -68,6 +68,8 @@ for i in range(len(MAP)):
 
 
 
+last_spawn_time = pygame.time.get_ticks()
+last_spawn_time = pygame.time.get_ticks()
 running = True
 while running:
     for event in pygame.event.get():
@@ -83,6 +85,7 @@ while running:
 
     
     # Calculate camera offset
+    last_spawn_time = Enemy.spawn_enemies(last_spawn_time)
     camera.calculate_camera_offset(player)
     screen.fill((0))
 
@@ -112,7 +115,8 @@ while running:
     screen.blit(fps_surface, (10, 10))
 
     # Draw the enemy to the screen
-    enemy_instance.draw(screen)
+    for enemy in Enemy.active_enemies:
+        enemy.draw(screen, camera)
     
     pygame.display.update()
     clock.tick(60)
