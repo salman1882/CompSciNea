@@ -90,11 +90,20 @@ class Player:
                 self.last_hit_time = current_time
                 self.health -= 1
                 knockback_distance = 100
-                if self.direction == 'right':
-                    self.move(-knockback_distance, 0, [])
-                elif self.direction == 'left':
-                    self.move(knockback_distance, 0, [])
-                elif self.direction == 'up':
-                    self.move(0, knockback_distance, [])
-                elif self.direction == 'down':
-                    self.move(0, -knockback_distance, [])
+                
+                # Calculate the vector from the enemy to the player
+                dx = self.x - enemy.x
+                dy = self.y - enemy.y
+                
+                # Normalize the vector
+                distance = (dx**2 + dy**2)**0.5
+                dx /= distance
+                dy /= distance
+                
+                # Apply knockback to the player
+                self.x += dx * knockback_distance
+                self.y += dy * knockback_distance
+
+                # Apply knockback to the enemy in the opposite direction
+                enemy.x -= dx * knockback_distance
+                enemy.y -= dy * knockback_distance
