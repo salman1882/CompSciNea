@@ -73,6 +73,7 @@ running = True
 while running:
     player.handle_collisions(Enemy.active_enemies)
 
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False

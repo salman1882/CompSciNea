@@ -79,31 +79,43 @@ class Player:
         hitbox_height = self.height + self.hitbox_height_offset
         self.rect = pygame.Rect(self.x, self.y, hitbox_width, hitbox_height)
 
-    def handle_collisions(self, enemies):
-        self.update_rect()
-        current_time = pygame.time.get_ticks()
-        if current_time - self.last_hit_time < 1000:
-            return
-        for enemy in enemies:
-            enemy.update_rect()
-            if self.rect.colliderect(enemy.rect):
-                self.last_hit_time = current_time
-                self.health -= 1
-                knockback_distance = 100
-                
-                # Calculate the vector from the enemy to the player
-                dx = self.x - enemy.x
-                dy = self.y - enemy.y
-                
-                # Normalize the vector
-                distance = (dx**2 + dy**2)**0.5
-                dx /= distance
-                dy /= distance
-                
-                # Apply knockback to the player
-                self.x += dx * knockback_distance
-                self.y += dy * knockback_distance
+    def handle_collisions(self, enemies, walls):
+       self.update_rect()
+       current_time = pygame.time.get_ticks()
+       if current_time - self.last_hit_time < 1000:
+           return
+       for enemy in enemies:
+           enemy.update_rect()
+           if self.rect.colliderect(enemy.rect):
+             self.last_hit_time = current_time
+             self.health -= 1
+             knockback_distance = 100
+            
+             # Calculate the vector from the enemy to the player
+             dx = self.x - enemy.x
+             dy = self.y - enemy.y
+            
+             # Normalize the vector
+             distance = (dx**2 + dy**2)**0.5
+             dx /= distance
+             dy /= distance
+            
+             # Calculate new position for knockback
+             new_x = self.x + dx * knockback_distance
+             new_y = self.y + dy * knockback_distance
+             new_rect = pygame.Rect(new_x + (64 - self.width) // 2, new_y + (100 - self.height) // 2, self.width, self.height)
 
-                # Apply knockback to the enemy in the opposite direction
-                enemy.x -= dx * knockback_distance
-                enemy.y -= dy * knockback_distance
+             # Check if new position collides with walls
+             collision = False
+             for wall in walls:
+                 if new_rect.colliderect(wall):
+                     collision = True
+
+             # Apply knockback if no collision with walls
+             if not collision:
+                 self.x = new_x
+                 self.y = new_y
+
+             # Apply knockback to the enemy in the opposite direction
+             enemy.x -= dx * knockback_distance
+             enemy.y -= dy * knockback_distance
