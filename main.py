@@ -5,7 +5,7 @@ import pygame
 import spritesheet
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE, MAP
 from player import *
-#IMPORTANT, fix sprite continous running and movement speed higher on diag, cooldown between attacks
+#IMPORTANT, fix sprite continous running and movement speed higher on diag, cooldown between attacks, enemeis kb doesnt work well, if even amount of enemies are on player than no kb taken, kb also goes wrong direction sometimes
 
 
 pygame.init()
@@ -55,10 +55,9 @@ sword_images = {
 ghost = pygame.image.load('sprites/ghost.png').convert_alpha()
 
 # Initialize a player
+
 player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, 1, TILE_SIZE, TILE_SIZE)
 
-# Initialize an enemy
-enemy_instance = Enemy(200, 200, 2, 75, 75, ghost)
 
 walls = []
 for i in range(len(MAP)):
@@ -72,6 +71,8 @@ last_spawn_time = pygame.time.get_ticks()
 last_spawn_time = pygame.time.get_ticks()
 running = True
 while running:
+    player.handle_collisions(Enemy.active_enemies)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -116,9 +117,11 @@ while running:
 
     # Draw the enemy to the screen
     for enemy in Enemy.active_enemies:
+        
+        enemy.move_towards_player(player)
         enemy.draw(screen, camera)
     
     pygame.display.update()
     clock.tick(60)
-
+    print(player.health)
 pygame.quit()

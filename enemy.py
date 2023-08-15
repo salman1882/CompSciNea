@@ -9,11 +9,36 @@ class Enemy(Player):
     # Class variable to store all active enemies
     active_enemies = []
 
-    def __init__(self, x, y, speed, width, height, image=pygame.image.load('sprites/ghost.png')):
-        super().__init__(x, y, speed, width, height)
+    def __init__(self, x, y, width, height, speed=1, image=pygame.image.load('sprites/ghost.png')):
+        super().__init__(x, y, width, height,speed)
         self.direction = 'left'  # Initial direction enemy is facing. Set to 'left' for differentiation.
         self.image = image  # Image for the enemy
         Enemy.active_enemies.append(self)  # Add the enemy to the active enemies list
+
+    def move_towards_player(self, player):
+        # Calculate the vector from enemy to player
+        dx = player.x - self.x
+        dy = player.y - self.y
+        
+        # Calculate the distance between the enemy and player
+        distance = (dx**2 + dy**2)**0.5
+        
+        # If the player is close enough to the enemy, stop moving
+        if distance < 55:  # This can be adjusted as needed
+            return
+        
+        # Normalize the vector
+        dx = dx / distance
+        dy = dy / distance
+        
+        # Multiply by enemy's speed to get movement vector
+        move_dx = self.speed * dx
+        move_dy = self.speed * dy
+        
+        # Update enemy's position
+        self.x += move_dx
+        self.y += move_dy
+
 
     # Override the draw method to render the enemy image
     def draw(self, screen, camera):
@@ -47,10 +72,3 @@ class Enemy(Player):
             return current_time  # Update the last spawn time
         return last_spawn_time
 
-        current_time = pygame.time.get_ticks()
-        if current_time - last_spawn_time >= 5000 and len(Enemy.active_enemies) < 5: 
-            x = random.randint(0, screen_width - TILE_SIZE)
-            y = random.randint(0, screen_height - TILE_SIZE)
-            enemy = Enemy(x, y, 5, TILE_SIZE, TILE_SIZE)  
-            return current_time  # Update the last spawn time
-        return last_spawn_time
