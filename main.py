@@ -1,4 +1,3 @@
-
 # Create an instance of the Enemy class using the "ghost" image
 from enemy import Enemy
 import pygame
@@ -71,7 +70,7 @@ last_spawn_time = pygame.time.get_ticks()
 last_spawn_time = pygame.time.get_ticks()
 running = True
 while running:
-    player.handle_collisions(Enemy.active_enemies)
+    player.handle_collisions(Enemy.active_enemies, walls)
 
 
     for event in pygame.event.get():
