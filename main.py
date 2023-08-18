@@ -104,7 +104,7 @@ while running:
         camera.draw_with_offset(screen, attack_images[player.direction], (player.x, player.y))
 
         # Displaying the sword image during attack
-        camera.draw_with_offset(screen, sword_images[player.direction], (player.x, player.y))
+        camera.draw_with_offset(screen, sword_images[player.direction], (player.x + 35, player.y + 40))
         
     else:
         camera.draw_with_offset(screen, animations[player.direction][player.frame], (player.x, player.y))

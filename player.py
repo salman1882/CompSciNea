@@ -119,3 +119,20 @@ class Player:
              # Apply knockback to the enemy in the opposite direction
              enemy.x -= dx * knockback_distance
              enemy.y -= dy * knockback_distance
+
+    def get_sword_offset(self):
+        offset_x = 0
+        offset_y = 0
+        if self.direction == 'right':
+            offset_x = 45
+            offset_y = 45
+        elif self.direction == 'left':
+            offset_x = -45
+            offset_y = 45
+        elif self.direction == 'up':
+            offset_x = 35
+            offset_y = -50
+        elif self.direction == 'down':
+            offset_x = 31
+            offset_y = 70
+        return offset_x, offset_y
