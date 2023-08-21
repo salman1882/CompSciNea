@@ -78,7 +78,9 @@ while running:
             running = False
 
     keys = pygame.key.get_pressed()
-    player.handle_movement(keys, walls)
+    player.handle_movement(keys, walls)    
+    player.check_sword_collisions(Enemy.active_enemies)  # Check for sword collisions with enemies
+
 
     if player.is_attacking:
         if pygame.time.get_ticks() - player.attack_start_time > Player.attack_cooldown:
@@ -119,7 +121,7 @@ while running:
 
     # Draw the enemy to the screen
     for enemy in Enemy.active_enemies: 
-        
+        print(f"Enemy Health: {enemy.health}")  # Print the health of each enemy
         enemy.move_towards_player(player)
         enemy.draw(screen, camera)
     

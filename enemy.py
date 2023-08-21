@@ -13,6 +13,7 @@ class Enemy(Player):
         super().__init__(x, y, width, height,speed)
         self.direction = 'left'  # Initial direction enemy is facing. Set to 'left' for differentiation.
         self.image = image  # Image for the enemy
+        self.health = 3
         Enemy.active_enemies.append(self)  # Add the enemy to the active enemies list
 
     def move_towards_player(self, player):

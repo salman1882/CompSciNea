@@ -1,4 +1,3 @@
-
 import pygame
 from settings import TILE_SIZE
 
@@ -20,13 +19,17 @@ class Player:
         self.animation_cooldown = 80
         self.frame = 0
         self.last_update = pygame.time.get_ticks()
+        self.sword_width = 20  # Width of the sword's hitbox
+        self.sword_height = 20  # Height of the sword's hitbox
+        self.sword_rect = pygame.Rect(self.x, self.y, self.sword_width, self.sword_height)  # Initial sword rectangle
         self.last_hit_time = 0  # Time of the last hit by an enemy
 
     def handle_movement(self, keys, walls):
         if self.is_attacking:
             return
-        
+
         if keys[pygame.K_SPACE] and not self.is_attacking:
+            self.update_sword_rect()  # Update the sword's rectangle during an attack
             self.is_attacking = True
             self.attack_start_time = pygame.time.get_ticks()
 
@@ -136,3 +139,16 @@ class Player:
             offset_x = 31
             offset_y = 70
         return offset_x, offset_y
+        
+    def update_sword_rect(self):
+        offset_x, offset_y = self.get_sword_offset()
+        self.sword_rect.x = self.x + offset_x
+        self.sword_rect.y = self.y + offset_y
+        return offset_x, offset_y
+
+    def check_sword_collisions(self, enemies):
+        # Loop through active enemies
+        for enemy in enemies:
+            # Check for collisions with the sword's rectangle
+            if self.sword_rect.colliderect(enemy.rect):
+                enemy.health -= 1
