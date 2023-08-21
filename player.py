@@ -152,3 +152,6 @@ class Player:
             # Check for collisions with the sword's rectangle
             if self.sword_rect.colliderect(enemy.rect):
                 enemy.health -= 1
+                # Despawn the enemy if its health drops below 0
+                if enemy.health <= 0:
+                    enemy.active_enemies.remove(enemy)

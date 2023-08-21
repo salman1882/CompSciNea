@@ -61,7 +61,7 @@ player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, 1, TILE_SIZE, TILE_SIZE)
 walls = []
 for i in range(len(MAP)):
     for j in range(len(MAP[i])):
-        if MAP[i][j] == 'x':
+        if MAP[i][j] == 'x':                                            
             walls.append(pygame.Rect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE))
 
 

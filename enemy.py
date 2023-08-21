@@ -14,8 +14,10 @@ class Enemy(Player):
         self.direction = 'left'  # Initial direction enemy is facing. Set to 'left' for differentiation.
         self.image = image  # Image for the enemy
         self.health = 3
+        self.update_rect()  # Initialize the enemy's rectangle
         Enemy.active_enemies.append(self)  # Add the enemy to the active enemies list
 
+            
     def move_towards_player(self, player):
         # Calculate the vector from enemy to player
         dx = player.x - self.x
