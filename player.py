@@ -5,6 +5,7 @@ class Player:
     attack_cooldown = 300
 
     def __init__(self, x, y, speed, width, height):
+        self.projectiles = []  # List to store active projectiles
         self.health = 3
         self.x = x
         self.y = y
@@ -23,6 +24,12 @@ class Player:
         self.sword_height = 20  # Height of the sword's hitbox
         self.sword_rect = pygame.Rect(self.x, self.y, self.sword_width, self.sword_height)  # Initial sword rectangle
         self.last_hit_time = 0  # Time of the last hit by an enemy
+        self.projectiles = []  # List to store active projectiles
+
+        if self.is_attacking and not self.projectiles:
+            projectile = Projectile(self.x, self.y, self.direction)
+            self.projectiles.append(projectile)
+
 
     def handle_movement(self, keys, walls):
         if self.is_attacking:
@@ -115,7 +122,7 @@ class Player:
                      collision = True
 
              # Apply knockback if no collision with walls
-             if collision:
+             if not collision:
                  self.x = new_x
                  self.y = new_y
 
@@ -166,3 +173,50 @@ class Player:
         for i in range(3):
             color = pygame.Color('black') if i >= self.health else pygame.Color('red')
             pygame.draw.rect(screen, color, (top_right_x + i * (square_size + spacing), top_right_y, square_size, square_size))
+
+    def update_projectiles(self):
+        for projectile in self.projectiles[:]:
+            projectile.update()
+            if self.is_out_of_bounds(projectile):
+                self.projectiles.remove(projectile)
+
+    def render_projectiles(self, screen):
+        for projectile in self.projectiles:
+            projectile.render(screen)
+
+    def is_out_of_bounds(self, projectile):
+        pass  # add later
+
+class Projectile:
+    def __init__(self, x, y, direction, speed=5):
+        self.x = x
+        self.y = y
+        self.direction = direction
+        self.speed = speed
+
+    def update(self):
+        if self.direction == 'right':
+            self.x += self.speed
+        elif self.direction == 'left':
+            self.x -= self.speed
+        elif self.direction == 'up':
+            self.y -= self.speed
+        elif self.direction == 'down':
+            self.y += self.speed
+
+    def render(self, screen):
+        pygame.draw.circle(screen, (255, 0, 0), (self.x, self.y), 5)
+
+    def update_projectiles(self):
+        for projectile in self.projectiles[:]:
+            projectile.update()
+            if self.is_out_of_bounds(projectile):
+                self.projectiles.remove(projectile)
+
+    def render_projectiles(self, screen):
+        for projectile in self.projectiles:
+            projectile.render(screen)
+
+    def is_out_of_bounds(self, projectile):
+        pass
+        #add later
