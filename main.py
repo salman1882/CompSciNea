@@ -87,6 +87,8 @@ while title_screen_active:
 running = True
 while running:
     player.handle_collisions(Enemy.active_enemies, walls)
+    player.update_projectiles()
+
 
 
     for event in pygame.event.get():
@@ -140,7 +142,9 @@ while running:
         enemy.move_towards_player(player)
         enemy.draw(screen, camera)
     
+    player.render_projectiles(screen)
     player.draw_health(screen, SCREEN_WIDTH)
+    
 
     pygame.display.update()
     clock.tick(60)

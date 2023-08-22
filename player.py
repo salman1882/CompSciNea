@@ -6,6 +6,7 @@ class Player:
 
     def __init__(self, x, y, speed, width, height):
         self.projectiles = []  # List to store active projectiles
+        self.projectiles = []  # List to store active projectiles
         self.health = 3
         self.x = x
         self.y = y
@@ -154,6 +155,11 @@ class Player:
         return offset_x, offset_y
 
     def check_sword_collisions(self, enemies):
+        
+        # Create a projectile when the player is attacking
+        if self.is_attacking:
+            projectile = Projectile(self.x, self.y, self.direction)
+            self.projectiles.append(projectile)
         if self.is_attacking == False: 
             return 
         for enemy in enemies:
@@ -206,17 +212,3 @@ class Projectile:
 
     def render(self, screen):
         pygame.draw.circle(screen, (255, 0, 0), (self.x, self.y), 5)
-
-    def update_projectiles(self):
-        for projectile in self.projectiles[:]:
-            projectile.update()
-            if self.is_out_of_bounds(projectile):
-                self.projectiles.remove(projectile)
-
-    def render_projectiles(self, screen):
-        for projectile in self.projectiles:
-            projectile.render(screen)
-
-    def is_out_of_bounds(self, projectile):
-        pass
-        #add later
