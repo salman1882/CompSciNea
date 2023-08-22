@@ -140,7 +140,7 @@ while running:
         enemy.move_towards_player(player)
         enemy.draw(screen, camera)
     
-        player.draw_health(screen, SCREEN_WIDTH)
+    player.draw_health(screen, SCREEN_WIDTH)
 
     pygame.display.update()
     clock.tick(60)

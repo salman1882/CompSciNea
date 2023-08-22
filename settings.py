@@ -71,6 +71,30 @@ MAP = [
 ]
 
 
+def count_lines_of_code():
+    files_to_count = [
+        "main.py",
+        "player.py",
+        "enemy.py",
+    ]
+    line_counts = {}
+    total_lines = 0
+    for file_path in files_to_count:
+        try:
+            with open(file_path, 'r') as file:
+                lines = file.readlines()
+                line_count = len(lines)
+                line_counts[file_path] = line_count
+                total_lines += line_count
+        except FileNotFoundError:
+            line_counts[file_path] = "File not found"
+    print("Lines of code in the specified files:")
+    for file, count in line_counts.items():
+        print(f"{file}: {count}")
+    print(f"Total lines of code in the specified files: {total_lines}")
+
+# Call the function to print the line counts
+count_lines_of_code()
 
 
 

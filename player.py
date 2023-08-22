@@ -115,7 +115,7 @@ class Player:
                      collision = True
 
              # Apply knockback if no collision with walls
-             if not collision:
+             if collision:
                  self.x = new_x
                  self.y = new_y
 
