@@ -5,7 +5,7 @@ class Player:
     attack_cooldown = 300
 
     def __init__(self, x, y, speed, width, height):
-        self.health = 100
+        self.health = 3
         self.x = x
         self.y = y
         self.speed = speed
@@ -147,11 +147,22 @@ class Player:
         return offset_x, offset_y
 
     def check_sword_collisions(self, enemies):
-        # Loop through active enemies
+        if self.is_attacking == False: 
+            return 
         for enemy in enemies:
             # Check for collisions with the sword's rectangle
             if self.sword_rect.colliderect(enemy.rect):
-                enemy.health -= 1
-                # Despawn the enemy if its health drops below 0
+                enemy.health -=  1 
                 if enemy.health <= 0:
                     enemy.active_enemies.remove(enemy)
+
+        
+    def draw_health(self, screen, SCREEN_WIDTH):
+        square_size = 20
+        spacing = 5
+        top_right_x = SCREEN_WIDTH - (3 * square_size + 2 * spacing)
+        top_right_y = 10
+
+        for i in range(3):
+            color = pygame.Color('black') if i >= self.health else pygame.Color('red')
+            pygame.draw.rect(screen, color, (top_right_x + i * (square_size + spacing), top_right_y, square_size, square_size))

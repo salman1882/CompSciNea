@@ -4,7 +4,10 @@ import pygame
 import spritesheet
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE, MAP
 from player import *
+from title_screen import TitleScreen
+
 #IMPORTANT, fix sprite continous running and movement speed higher on diag, cooldown between attacks, enemeis kb doesnt work well, if even amount of enemies are on player than no kb taken, kb also goes wrong direction sometimes
+
 
 
 pygame.init()
@@ -68,6 +71,19 @@ for i in range(len(MAP)):
 
 last_spawn_time = pygame.time.get_ticks()
 last_spawn_time = pygame.time.get_ticks()
+
+title_screen = TitleScreen(screen)
+title_screen_active = True
+
+while title_screen_active:
+    title_screen.draw()
+    pygame.display.update()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            title_screen_active = False
+            running = False
+        if title_screen.handle_events(event):
+            title_screen_active = False
 running = True
 while running:
     player.handle_collisions(Enemy.active_enemies, walls)
@@ -121,10 +137,11 @@ while running:
 
     # Draw the enemy to the screen
     for enemy in Enemy.active_enemies: 
-        print(f"Enemy Health: {enemy.health}")  # Print the health of each enemy
         enemy.move_towards_player(player)
         enemy.draw(screen, camera)
     
+        player.draw_health(screen, SCREEN_WIDTH)
+
     pygame.display.update()
     clock.tick(60)
 pygame.quit()
