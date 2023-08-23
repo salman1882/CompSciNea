@@ -2,7 +2,7 @@ import pygame
 
 class Camera:
     def __init__(self, screen_width, screen_height):
-        # Initialize the camera with the given screen dimensions
+        # Initialize the camera
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.offset_x = 0

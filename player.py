@@ -5,8 +5,6 @@ class Player:
     attack_cooldown = 300
 
     def __init__(self, x, y, speed, width, height):
-        self.projectiles = []  # List to store active projectiles
-        self.projectiles = []  # List to store active projectiles
         self.health = 3
         self.x = x
         self.y = y
@@ -17,7 +15,7 @@ class Player:
         self.hitbox_height_offset = 20  # Additional height for the hitbox
         self.direction = 'right'
         self.is_attacking = False
-        self.attack_start_time = None
+        self.attack_start_time = 10
         self.animation_cooldown = 80
         self.frame = 0
         self.last_update = pygame.time.get_ticks()
@@ -108,8 +106,8 @@ class Player:
             
              # Normalize the vector
              distance = (dx**2 + dy**2)**0.5
-             dx /= distance
-             dy /= distance
+             dx = dx / distance
+             dy = dy / distance
             
              # Calculate new position for knockback
              new_x = self.x + dx * knockback_distance
@@ -186,9 +184,10 @@ class Player:
             if self.is_out_of_bounds(projectile):
                 self.projectiles.remove(projectile)
 
-    def render_projectiles(self, screen):
-        for projectile in self.projectiles:
-            projectile.render(screen)
+    def render_projectiles(self, screen, camera):
+       for projectile in self.projectiles:
+          adjusted_position = (projectile.x + camera.offset_x, projectile.y + camera.offset_y)
+          projectile.render(screen, adjusted_position)
 
     def is_out_of_bounds(self, projectile):
         pass  # add later
@@ -199,6 +198,8 @@ class Projectile:
         self.y = y
         self.direction = direction
         self.speed = speed
+        self.width = 20
+        self.height = 20
 
     def update(self):
         if self.direction == 'right':

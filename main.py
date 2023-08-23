@@ -1,4 +1,3 @@
-# Create an instance of the Enemy class using the "ghost" image
 from enemy import Enemy
 import pygame
 import spritesheet
@@ -96,9 +95,9 @@ while running:
             running = False
 
     keys = pygame.key.get_pressed()
-    player.handle_movement(keys, walls)    
-    player.check_sword_collisions(Enemy.active_enemies)  # Check for sword collisions with enemies
-
+    player.handle_movement(keys, walls)  
+    # Check for sword collisions with enemies  
+    player.check_sword_collisions(Enemy.active_enemies)  
 
     if player.is_attacking:
         if pygame.time.get_ticks() - player.attack_start_time > Player.attack_cooldown:
@@ -142,7 +141,11 @@ while running:
         enemy.move_towards_player(player)
         enemy.draw(screen, camera)
     
-    player.render_projectiles(screen)
+    # Draw the projectile 
+    for projectile in player.projectiles:
+       rect = pygame.Rect(projectile.x, projectile.y, projectile.width, projectile.height)  
+       adjusted_rect = camera.apply_offset(rect)
+       pygame.draw.rect(screen, (255, 0, 0), adjusted_rect) 
     player.draw_health(screen, SCREEN_WIDTH)
     
 

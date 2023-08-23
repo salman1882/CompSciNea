@@ -11,7 +11,7 @@ class Enemy(Player):
 
     def __init__(self, x, y, width, height, speed=1, image=pygame.image.load('sprites/ghost.png')):
         super().__init__(x, y, width, height,speed)
-        self.direction = 'left'  # Initial direction enemy is facing. Set to 'left' for differentiation.
+        self.direction = 'left'  # Initial direction enemy is facing.
         self.image = image  # Image for the enemy
         self.health = 3
         self.update_rect()  # Initialize the enemy's rectangle
@@ -27,14 +27,13 @@ class Enemy(Player):
         distance = (dx**2 + dy**2)**0.5
         
         # If the player is close enough to the enemy, stop moving
-        if distance < 55:  # This can be adjusted as needed
+        if distance < 55:  
             return
         
         # Normalize the vector
         dx = dx / distance
         dy = dy / distance
         
-        # Multiply by enemy's speed to get movement vector
         move_dx = self.speed * dx
         move_dy = self.speed * dy
         
@@ -49,7 +48,7 @@ class Enemy(Player):
             camera.draw_with_offset(screen, self.image, (self.x, self.y))
         else:
             adjusted_rect = camera.apply_offset(pygame.Rect(self.x, self.y, self.width, self.height))
-            pygame.draw.rect(screen, (255, 0, 0), adjusted_rect)  # Draw a red placeholder rectangle if no image
+            pygame.draw.rect(screen, (255, 0, 0), adjusted_rect)  
 
     
     def spawn_enemies(last_spawn_time):
