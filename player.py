@@ -2,7 +2,8 @@ import pygame
 from settings import TILE_SIZE
 
 class Player:
-    attack_cooldown = 300
+    attack_duration = 300
+    attack_cooldown_duration = 750
 
     def __init__(self, x, y, speed, width, height):
         self.health = 3
@@ -15,7 +16,7 @@ class Player:
         self.hitbox_height_offset = 20  # Additional height for the hitbox
         self.direction = 'right'
         self.is_attacking = False
-        self.attack_start_time = 10
+        self.attack_start_time = 1
         self.animation_cooldown = 80
         self.frame = 0
         self.last_update = pygame.time.get_ticks()
@@ -34,7 +35,7 @@ class Player:
         if self.is_attacking:
             return
 
-        if keys[pygame.K_SPACE] and not self.is_attacking:
+        if keys[pygame.K_SPACE] and not self.is_attacking and pygame.time.get_ticks() - self.attack_start_time >= self.attack_cooldown_duration:
             self.update_sword_rect()  # Update the sword's rectangle during an attack
             self.is_attacking = True
             self.attack_start_time = pygame.time.get_ticks()
