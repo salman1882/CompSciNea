@@ -1,6 +1,5 @@
 import pygame
 from settings import TILE_SIZE
-from enemy import Enemy
 
 class Player:
     attack_duration = 300
@@ -184,6 +183,7 @@ class Player:
         for projectile in self.projectiles[:]:
             projectile.update()
             
+            from enemy import Enemy
             for enemy in Enemy.active_enemies:
                 if projectile.get_hitbox().colliderect(enemy.rect):
                     enemy.health -= 1
