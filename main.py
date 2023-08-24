@@ -62,9 +62,8 @@ player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, 1, TILE_SIZE, TILE_SIZE)
 walls = []
 for i in range(len(MAP)):
     for j in range(len(MAP[i])):
-        if MAP[i][j] == 'x':                                            
+        if MAP[i][j] == 'x' or MAP[i][j] == 'w':                                            
             walls.append(pygame.Rect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE))
-
 
 
 last_spawn_time = pygame.time.get_ticks()
@@ -85,6 +84,11 @@ while title_screen_active:
 running = True
 while running:
     player.handle_collisions(Enemy.active_enemies, walls)
+
+    for wall in walls:
+        if MAP[wall.top // TILE_SIZE][wall.left // TILE_SIZE] == 'w':
+            pygame.draw.rect(screen, (0, 0, 255), wall)
+
     player.update_projectiles()
 
 
@@ -103,20 +107,22 @@ while running:
             player.is_attacking = False
 
     
-    # Calculate camera offset
+    # Calculate camera offsetadjust_
     last_spawn_time = Enemy.spawn_enemies(last_spawn_time)
     camera.calculate_camera_offset(player)
     screen.fill((0))
 
     player.update_animation()
 
-
-    # draws red walls where "X" is on tilemap
-    for wall in walls:
-        pygame.draw.rect(screen, (255, 0, 0), camera.apply_offset(wall))
-    
     camera.draw_with_offset(screen, water, (-2000, -1100))
     camera.draw_with_offset(screen, background_image, (0, 0))
+
+    blue_square = pygame.Surface((TILE_SIZE, TILE_SIZE))
+    blue_square.fill((0, 0, 255))
+    for wall in walls:
+        if MAP[wall.top // TILE_SIZE][wall.left // TILE_SIZE] == 'w':
+            camera.draw_with_offset(screen, blue_square, (wall.left, wall.top))
+
 
     if player.is_attacking:
         camera.draw_with_offset(screen, attack_images[player.direction], (player.x, player.y))
@@ -130,14 +136,14 @@ while running:
         camera.draw_with_offset(screen, animations[player.direction][player.frame], (player.x, player.y))
 
     
-    
+    # Draw fps counter 
     fps = clock.get_fps()
     fps_surface = font.render(f"FPS: {fps:.2f}", True, pygame.Color('white'))
     screen.blit(fps_surface, (10, 10))
 
     # Draw the enemy to the screen
     for enemy in Enemy.active_enemies: 
-        enemy.move_towards_player(player)
+        enemy.move_towards_player(player, walls)
         enemy.draw(screen, camera)
     
     # Draw the projectile 
