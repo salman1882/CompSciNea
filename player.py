@@ -1,5 +1,6 @@
 import pygame
 from settings import TILE_SIZE
+from enemy import Enemy
 
 class Player:
     attack_duration = 300
@@ -130,7 +131,7 @@ class Player:
              enemy.x -= dx * knockback_distance
              enemy.y -= dy * knockback_distance
 
-    def get_sword_offset(self):
+    def get_item_offset(self):
         offset_x = 0
         offset_y = 0
         if self.direction == 'right':
@@ -148,7 +149,7 @@ class Player:
         return offset_x, offset_y
         
     def update_sword_rect(self):
-        offset_x, offset_y = self.get_sword_offset()
+        offset_x, offset_y = self.get_item_offset()
         self.sword_rect.x = self.x + offset_x
         self.sword_rect.y = self.y + offset_y
         return offset_x, offset_y
@@ -182,13 +183,24 @@ class Player:
     def update_projectiles(self):
         for projectile in self.projectiles[:]:
             projectile.update()
+            
+            for enemy in Enemy.active_enemies:
+                if projectile.get_hitbox().colliderect(enemy.rect):
+                    enemy.health -= 1
+                    if enemy.health <= 0:
+                        Enemy.active_enemies.remove(enemy)
+                    self.projectiles.remove(projectile)
+                    break
+
             if self.is_out_of_bounds(projectile):
                 self.projectiles.remove(projectile)
 
     def render_projectiles(self, screen, camera):
-       for projectile in self.projectiles:
-          adjusted_position = (projectile.x + camera.offset_x, projectile.y + camera.offset_y)
-          projectile.render(screen, adjusted_position)
+      for projectile in self.projectiles:
+        rect = pygame.Rect(projectile.x, projectile.y, projectile.width, projectile.height)
+        adjusted_rect = camera.apply_offset(rect)
+        pygame.draw.rect(screen, (255, 0, 0), adjusted_rect)
+
 
     def is_out_of_bounds(self, projectile):
         pass  # add later
@@ -212,5 +224,10 @@ class Projectile:
         elif self.direction == 'down':
             self.y += self.speed
 
+    
+    def get_hitbox(self):
+        return pygame.Rect(self.x, self.y, self.width, self.height)
+
     def render(self, screen):
         pygame.draw.circle(screen, (255, 0, 0), (self.x, self.y), 5)
+                           

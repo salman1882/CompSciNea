@@ -45,7 +45,6 @@ attack_images = {
     'up': pygame.image.load('sprites/upattack.PNG').convert_alpha()
 }
 
-attack_start_time = 0
 # Load sword images
 sword_images = {
     'right': pygame.image.load('sprites/rightsword.PNG').convert_alpha(),
@@ -100,7 +99,7 @@ while running:
     player.check_sword_collisions(Enemy.active_enemies)  
 
     if player.is_attacking:
-        if pygame.time.get_ticks() - player.attack_start_time > Player.attack_cooldown:
+        if pygame.time.get_ticks() - player.attack_start_time > Player.attack_duration:
             player.is_attacking = False
 
     
@@ -123,7 +122,7 @@ while running:
         camera.draw_with_offset(screen, attack_images[player.direction], (player.x, player.y))
 
         # Displaying the sword image during attack
-        offset_x, offset_y = player.get_sword_offset()
+        offset_x, offset_y = player.get_item_offset()
         camera.draw_with_offset(screen, sword_images[player.direction], (player.x + offset_x, player.y + offset_y))
  
         
@@ -142,10 +141,8 @@ while running:
         enemy.draw(screen, camera)
     
     # Draw the projectile 
-    for projectile in player.projectiles:
-       rect = pygame.Rect(projectile.x, projectile.y, projectile.width, projectile.height)  
-       adjusted_rect = camera.apply_offset(rect)
-       pygame.draw.rect(screen, (255, 0, 0), adjusted_rect) 
+    player.render_projectiles(screen, camera)
+
     player.draw_health(screen, SCREEN_WIDTH)
     
 
