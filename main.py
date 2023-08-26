@@ -3,6 +3,7 @@ import pygame
 import spritesheet
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE, MAP
 from player import *
+from magic import Fireball
 from title_screen import TitleScreen
 
 #IMPORTANT, fix sprite continous running and movement speed higher on diag, cooldown between attacks, enemeis kb doesnt work well, if even amount of enemies are on player than no kb taken, kb also goes wrong direction sometimes
@@ -98,7 +99,12 @@ while running:
             running = False
 
     keys = pygame.key.get_pressed()
+    if keys[pygame.K_2] and player.mana >= 20:
+        fireball = Fireball(player.x, player.y, player.direction)
+        player.projectiles.append(fireball)
+        player.mana -= 20
     player.handle_movement(keys, walls)  
+    player.regenerate_mana()
     # Check for sword collisions with enemies  
     player.check_sword_collisions(Enemy.active_enemies)  
 
@@ -112,6 +118,7 @@ while running:
     camera.calculate_camera_offset(player)
     screen.fill((0))
 
+    player.regenerate_mana()
     player.update_animation()
 
     camera.draw_with_offset(screen, water, (-2000, -1100))
@@ -122,7 +129,13 @@ while running:
     for wall in walls:
         if MAP[wall.top // TILE_SIZE][wall.left // TILE_SIZE] == 'w':
             camera.draw_with_offset(screen, blue_square, (wall.left, wall.top))
-
+    
+    for projectile in player.projectiles:
+      if isinstance(projectile, Fireball):
+          projectile.update()
+      else:
+          # Handle rendering for other types of projectiles here
+          pass
 
     if player.is_attacking:
         camera.draw_with_offset(screen, attack_images[player.direction], (player.x, player.y))
@@ -151,7 +164,7 @@ while running:
 
     player.draw_health(screen, SCREEN_WIDTH)
     
-
+    print(player.mana)
     pygame.display.update()
     clock.tick(60)
 pygame.quit()

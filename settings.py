@@ -74,11 +74,6 @@ MAP = [
 
 
 
-
-
-
-
-
 def count_lines_of_code():
     files_to_count = [
         "main.py",

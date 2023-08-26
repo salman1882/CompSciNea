@@ -6,6 +6,9 @@ class Player:
     attack_cooldown_duration = 750
 
     def __init__(self, x, y, speed, width, height):
+        self.mana = 3300
+        self.max_mana = 50
+        self.last_mana_regeneration_time = pygame.time.get_ticks()
         self.health = 3
         self.x = x
         self.y = y
@@ -26,9 +29,7 @@ class Player:
         self.last_hit_time = 0  # Time of the last hit by an enemy
         self.projectiles = []  # List to store active projectiles
 
-        if self.is_attacking and not self.projectiles:
-            projectile = Projectile(self.x, self.y, self.direction)
-            self.projectiles.append(projectile)
+        
 
 
     def handle_movement(self, keys, walls):
@@ -94,6 +95,7 @@ class Player:
        current_time = pygame.time.get_ticks()
        if current_time - self.last_hit_time < 1000:
            return
+           
        for enemy in enemies:
            enemy.update_rect()
            if self.rect.colliderect(enemy.rect):
@@ -180,6 +182,7 @@ class Player:
             pygame.draw.rect(screen, color, (top_right_x + i * (square_size + spacing), top_right_y, square_size, square_size))
 
     def update_projectiles(self):
+        self.regenerate_mana()
         for projectile in self.projectiles[:]:
             projectile.update()
             
@@ -205,6 +208,14 @@ class Player:
     def is_out_of_bounds(self, projectile):
         pass  # add later
 
+
+    def regenerate_mana(self):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_mana_regeneration_time >= 1000:
+            if self.mana < self.max_mana:
+                self.mana += 1
+            self.last_mana_regeneration_time = current_time
+
 class Projectile:
     def __init__(self, x, y, direction, speed=5):
         self.x = x
@@ -228,6 +239,5 @@ class Projectile:
     def get_hitbox(self):
         return pygame.Rect(self.x, self.y, self.width, self.height)
 
-    def render(self, screen):
-        pygame.draw.circle(screen, (255, 0, 0), (self.x, self.y), 5)
+
                            
