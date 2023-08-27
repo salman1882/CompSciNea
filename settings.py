@@ -79,6 +79,8 @@ def count_lines_of_code():
         "main.py",
         "player.py",
         "enemy.py",
+        "magic.py",
+        "camera.py"
     ]
     line_counts = {}
     total_lines = 0

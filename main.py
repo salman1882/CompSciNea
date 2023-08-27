@@ -118,7 +118,6 @@ while running:
     camera.calculate_camera_offset(player)
     screen.fill((0))
 
-    player.regenerate_mana()
     player.update_animation()
 
     camera.draw_with_offset(screen, water, (-2000, -1100))
@@ -133,6 +132,7 @@ while running:
     for projectile in player.projectiles:
       if isinstance(projectile, Fireball):
           projectile.update()
+          projectile.render(screen, camera)
       else:
           # Handle rendering for other types of projectiles here
           pass
