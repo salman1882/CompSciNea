@@ -1,5 +1,6 @@
 import pygame
 from settings import TILE_SIZE
+from magic import Fireball
 
 class Player:
     attack_duration = 300
@@ -198,11 +199,15 @@ class Player:
             if self.is_out_of_bounds(projectile):
                 self.projectiles.remove(projectile)
 
+      
+
     def render_projectiles(self, screen, camera):
-      for projectile in self.projectiles:
-        rect = pygame.Rect(projectile.x, projectile.y, projectile.width, projectile.height)
-        adjusted_rect = camera.apply_offset(rect)
-        pygame.draw.rect(screen, (255, 0, 0), adjusted_rect)
+       for projectile in self.projectiles:
+         if not isinstance(projectile, Fireball):
+            rect = pygame.Rect(projectile.x, projectile.y, projectile.width, projectile.height)
+            adjusted_rect = camera.apply_offset(rect)
+            pygame.draw.rect(screen, (255, 0, 0), adjusted_rect)
+
 
 
     def is_out_of_bounds(self, projectile):
