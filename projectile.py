@@ -18,3 +18,4 @@ class Projectile:
             self.y -= self.speed
         elif self.direction == 'down':
             self.y += self.speed
+    

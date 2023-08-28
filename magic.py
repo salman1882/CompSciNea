@@ -1,6 +1,6 @@
 
 import pygame
-from player import Projectile
+from projectile import Projectile
 from enemy import Enemy
 
 class Fireball(Projectile):
@@ -35,3 +35,5 @@ class Fireball(Projectile):
         pygame.draw.circle(fireball_surface, (255, 0, 0), (self.radius, self.radius), self.radius)
         camera.draw_with_offset(screen, fireball_surface, (self.x - self.radius, self.y - self.radius))
  
+    def get_hitbox(self):
+        return pygame.Rect(self.x - self.radius, self.y - self.radius, self.radius * 2, self.radius * 2)

@@ -152,7 +152,7 @@ while running:
     # Draw fps counter 
     fps = clock.get_fps()
     fps_surface = font.render(f"FPS: {fps:.2f}", True, pygame.Color('white'))
-    screen.blit(fps_surface, (10, 10))
+    screen.blit(fps_surface, (10, 10)) 
 
     # Draw the enemy to the screen
     for enemy in Enemy.active_enemies: 
