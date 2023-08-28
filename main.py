@@ -133,6 +133,10 @@ while running:
       if isinstance(projectile, Fireball):
           projectile.update()
           projectile.render(screen, camera)
+      if hasattr(projectile, 'remove') and projectile.remove:
+            player.projectiles.remove(projectile)
+            continue
+
       else:
           # Handle rendering for other types of projectiles here
           pass

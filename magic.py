@@ -3,21 +3,20 @@ import pygame
 from projectile import Projectile
 from enemy import Enemy
 
-import pygame
-from projectile import Projectile
-from enemy import Enemy
-
 class Fireball(Projectile):
-    def __init__(self, x, y, direction, speed=10, damage=10, max_travel_distance=500):
+    def __init__(self, x, y, direction, speed=10, damage=10, max_travel_distance=600):
         super().__init__(x, y, direction, speed)
         self.damage = damage
         self.radius = 10  # Initial radius of the fireball
-        self.max_radius = 200  # Maximum size the fireball can grow to
-        self.growth_rate = 0.5  # Amount by which the fireball grows each update
+        self.max_radius = 250  # Maximum size the fireball can grow t
+        self.growth_rate = 1.5  # Amount by which the fireball grows each update
         self.distance_traveled = 0  # Distance the fireball has traveled
-        self.growth_start_distance = 100  # Distance after which the fireball starts growing
+        self.growth_start_distance = 599  # Distance after which the fireball starts growing
         self.max_size_duration = 0  # Time the fireball has been at its maximum size
-        self.max_travel_distance = max_travel_distance  # Maximum distance the fireball can travel
+        self.max_travel_distance = max_travel_distance
+        self.time_counter = 0  # Frame counter for the Fireball
+        self.lifetime_frames = 311  # (Time x 60 (amount of frames))
+  # Maximum distance the fireball can travel
 
     def update(self):
         # Update the fireball's position only if it hasn't traveled its maximum distance
@@ -33,7 +32,11 @@ class Fireball(Projectile):
         if self.radius >= self.max_radius:
             self.max_size_duration += 16
         
-        # Placeholder for removal logic after 1500ms at max size
+        
+        self.time_counter += 1  # Increment the counter for each frame
+        if self.time_counter > self.lifetime_frames:
+            self.remove = True
+
         if self.max_size_duration > 1500:
             pass
 
