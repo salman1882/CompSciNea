@@ -151,6 +151,7 @@ while running:
         
     else:
         camera.draw_with_offset(screen, animations[player.direction][player.frame], (player.x, player.y))
+    player.render_mana_bar(screen)
 
     
     # Draw fps counter 

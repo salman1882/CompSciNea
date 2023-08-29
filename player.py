@@ -209,6 +209,24 @@ class Player:
         pass  # add later
 
 
+    
+    def render_mana_bar(self, screen):
+        # Dimensions and positions of the bar 
+        bar_width = 200  
+        bar_height = 20   
+        x_position = 10  
+        y_position = 60
+
+        # Calculate the width of the filled portion based on the player's current mana
+        fill_width = (self.mana / self.max_mana) * bar_width
+
+        # Draw the background of the mana bar 
+        pygame.draw.rect(screen, (150, 150, 150), (x_position, y_position, bar_width, bar_height))
+        
+        # Draw the filled portion of the mana bar on top of the empty part of mana bar 
+        pygame.draw.rect(screen, (0, 0, 255), (x_position, y_position, fill_width, bar_height))
+
+
     def regenerate_mana(self):
         current_time = pygame.time.get_ticks()
         if current_time - self.last_mana_regeneration_time >= 1000:
