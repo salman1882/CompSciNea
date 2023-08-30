@@ -82,6 +82,8 @@ while title_screen_active:
             running = False
         if title_screen.handle_events(event):
             title_screen_active = False
+
+last_fireball_time = 0
 running = True
 while running:
     player.handle_collisions(Enemy.active_enemies, walls)
@@ -99,10 +101,12 @@ while running:
             running = False
 
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_2] and player.mana >= 20:
+    current_time = pygame.time.get_ticks()
+    if keys[pygame.K_2] and player.mana >= 20 and current_time - last_fireball_time > 2000:
         fireball = Fireball(player.x, player.y, player.direction)
         player.projectiles.append(fireball)
         player.mana -= 20
+        last_fireball_time = current_time
     player.handle_movement(keys, walls)  
     player.regenerate_mana()
     # Check for sword collisions with enemies  
@@ -146,7 +150,7 @@ while running:
 
         # Displaying the sword image during attack
         offset_x, offset_y = player.get_item_offset()
-        camera.draw_with_offset(screen, sword_images[player.direction], (player.x + offset_x, player.y + offset_y))
+        camera.draw_with_offset(screen, sword_images[player.direction], (player.x + offset_x, player.y + offset_y)) 
  
         
     else:
@@ -166,10 +170,9 @@ while running:
     
     # Draw the projectile 
     player.render_projectiles(screen, camera)
-
+    Enemy.display_wave_number(screen, font)
     player.draw_health(screen, SCREEN_WIDTH)
-    
-    print(player.mana)
     pygame.display.update()
+    print(Enemy.current_wave)
     clock.tick(60)
 pygame.quit()

@@ -3,17 +3,19 @@ import random
 from player import Player
 from camera import Camera
 from settings import TILE_SIZE  
-from settings import MAP    
+from settings import *  
 
 class Enemy(Player):
     # Class variable to store all active enemies
     active_enemies = []
+    current_wave = 1  # Tracks the current wave number
+    enemies_in_current_wave = 0  # Tracks the number of enemies spawned in the current wave
 
     def __init__(self, x, y, width, height, speed=1, image=pygame.image.load('sprites/ghost.png')):
         super().__init__(x, y, width, height,speed)
         self.direction = 'left'  # Initial direction enemy is facing.
         self.image = image  # Image for the enemy
-        self.health = 3
+        self.health = 30
         self.update_rect()  # Initialize the enemy's rectangle
         Enemy.active_enemies.append(self)  # Add the enemy to the active enemies list
 
@@ -36,8 +38,8 @@ class Enemy(Player):
             return
         
         # Normalize the vector
-        dx /= distance
-        dy /= distance
+        dx = dx / distance
+        dy = dy / distance
         
         # Adjust the movement by the enemy's speed
         move_dx = self.speed * dx
@@ -77,11 +79,14 @@ class Enemy(Player):
 
     
     def spawn_enemies(last_spawn_time):
+        base_enemies = 5
+        growth_rate = 1.5
+        max_enemies_for_wave = round(base_enemies * (growth_rate ** (Enemy.current_wave - 1)))
         MAP_WIDTH = len(MAP[0])
         MAP_HEIGHT = len(MAP)
         
         current_time = pygame.time.get_ticks()
-        if current_time - last_spawn_time >= 5000 and len(Enemy.active_enemies) < 5: 
+        if current_time - last_spawn_time >= 4000 and Enemy.enemies_in_current_wave < max_enemies_for_wave: 
             
             # Ensure the enemy spawns in a valid position
             valid_spawn = False
@@ -96,6 +101,17 @@ class Enemy(Player):
             y = y_tile * TILE_SIZE
             
             enemy = Enemy(x, y, 5, TILE_SIZE, TILE_SIZE)  
+            Enemy.enemies_in_current_wave += 1
             return current_time  # Update the last spawn time
+        # Transition to the next wave if all enemies of the current wave are defeated
+        if not Enemy.active_enemies and Enemy.enemies_in_current_wave >= max_enemies_for_wave:
+            Enemy.current_wave += 1  # Move to the next wave
+            Enemy.enemies_in_current_wave = 0  # Reset the count for the new wave
         return last_spawn_time
+    def display_wave_number(screen, font):
+    
+      # Render and display the current wave number at the top middle of the screen
+       wave_surface = font.render(f"Wave: {Enemy.current_wave}", True, pygame.Color('white'))
+       wave_position = (SCREEN_WIDTH // 2 - wave_surface.get_width() // 2, 10)
+       screen.blit(wave_surface, wave_position)
 

@@ -4,6 +4,8 @@ from projectile import Projectile
 from enemy import Enemy
 
 class Fireball(Projectile):
+
+    last_fireball_time = 0
     def __init__(self, x, y, direction, speed=10, damage=10, max_travel_distance=600):
         super().__init__(x, y, direction, speed)
         self.damage = damage
@@ -16,7 +18,7 @@ class Fireball(Projectile):
         self.max_travel_distance = max_travel_distance
         self.time_counter = 0  # Frame counter for the Fireball
         self.lifetime_frames = 311  # (Time x 60 (amount of frames))
-  # Maximum distance the fireball can travel
+
 
     def update(self):
         # Update the fireball's position only if it hasn't traveled its maximum distance
@@ -36,9 +38,6 @@ class Fireball(Projectile):
         self.time_counter += 1  # Increment the counter for each frame
         if self.time_counter > self.lifetime_frames:
             self.remove = True
-
-        if self.max_size_duration > 1500:
-            pass
 
     def render(self, screen, camera):
         fireball_surface = pygame.Surface((self.radius * 2, self.radius * 2), pygame.SRCALPHA)

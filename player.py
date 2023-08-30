@@ -6,7 +6,7 @@ class Player:
     attack_cooldown_duration = 750
 
     def __init__(self, x, y, speed, width, height):
-        self.mana = 3300
+        self.mana = 33000
         self.max_mana = 50
         self.last_mana_regeneration_time = pygame.time.get_ticks()
         self.health = 3
@@ -174,12 +174,12 @@ class Player:
     def draw_health(self, screen, SCREEN_WIDTH):
         square_size = 20
         spacing = 5
-        top_right_x = SCREEN_WIDTH - (3 * square_size + 2 * spacing)
-        top_right_y = 10
+        top_x = 10
+        top_y = 32
 
         for i in range(3):
             color = pygame.Color('black') if i >= self.health else pygame.Color('red')
-            pygame.draw.rect(screen, color, (top_right_x + i * (square_size + spacing), top_right_y, square_size, square_size))
+            pygame.draw.rect(screen, color, (top_x + i * (square_size + spacing), top_y, square_size, square_size))
 
     def update_projectiles(self):
         self.regenerate_mana()
@@ -233,6 +233,22 @@ class Player:
             if self.mana < self.max_mana:
                 self.mana += 1
             self.last_mana_regeneration_time = current_time
+    
+    def render_mana_bar(self, screen):
+        # Dimensions and positions of the bar 
+        bar_width = 200  
+        bar_height = 20   
+        x_position = 10  
+        y_position = 60
+
+        # Calculate the width of the filled portion based on the player's current mana
+        fill_width = (self.mana / self.max_mana) * bar_width
+
+        # Draw the background of the mana bar 
+        pygame.draw.rect(screen, (150, 150, 150), (x_position, y_position, bar_width, bar_height))
+
+        # Draw the filled portion of the mana bar on top of the empty part of mana bar 
+        pygame.draw.rect(screen, (0, 0, 255), (x_position, y_position, fill_width, bar_height))
 
 class Projectile:
     def __init__(self, x, y, direction, speed=5):
