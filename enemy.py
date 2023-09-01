@@ -15,7 +15,7 @@ class Enemy(Player):
         super().__init__(x, y, width, height,speed)
         self.direction = 'left'  # Initial direction enemy is facing.
         self.image = image  # Image for the enemy
-        self.health = 30
+        self.health = 100
         self.update_rect()  # Initialize the enemy's rectangle
         Enemy.active_enemies.append(self)  # Add the enemy to the active enemies list
 

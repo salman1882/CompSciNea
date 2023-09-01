@@ -164,7 +164,7 @@ while running:
     screen.blit(fps_surface, (10, 10)) 
 
     # Draw the enemy to the screen
-    for enemy in Enemy.active_enemies: 
+    for enemy in Enemy.active_enemies:
         enemy.move_towards_player(player, walls)
         enemy.draw(screen, camera)
     
@@ -173,6 +173,7 @@ while running:
     Enemy.display_wave_number(screen, font)
     player.draw_health(screen, SCREEN_WIDTH)
     pygame.display.update()
-    print(Enemy.current_wave)
+    for enemey in Enemy.active_enemies:
+      print(enemy.health)
     clock.tick(60)
-pygame.quit()
+pygame.quit() 

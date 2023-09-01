@@ -7,12 +7,18 @@ class Camera:
         self.screen_height = screen_height
         self.offset_x = 0
         self.offset_y = 0
-
+        self.lerp_factor = 0.2
+    def lerp(self, start, end):
+        return (1 - self.lerp_factor) * start + self.lerp_factor * end
     def calculate_camera_offset(self, target):
-        # Calculate the camera's offset based on the given target's position
-        # This centers the target in the middle of the screen
-        self.offset_x = -target.x + self.screen_width // 2
-        self.offset_y = -target.y + self.screen_height // 2
+         # Calculate the desired camera's offset based on the given target's position
+        # This would center the target in the middle of the screen
+        desired_offset_x = -target.x + self.screen_width // 2
+        desired_offset_y = -target.y + self.screen_height // 2
+
+        # Smoothly transition the current offset to the desired offset using lerp
+        self.offset_x = self.lerp(self.offset_x, desired_offset_x)
+        self.offset_y = self.lerp(self.offset_y, desired_offset_y)
 
     def apply_offset(self, rect):
         # Adjust a rectangle's position based on the camera's offset

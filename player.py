@@ -4,9 +4,10 @@ from settings import TILE_SIZE
 class Player:
     attack_duration = 300
     attack_cooldown_duration = 750
+    done_projectile = False
 
     def __init__(self, x, y, speed, width, height):
-        self.mana = 33000
+        self.mana = 50
         self.max_mana = 50
         self.last_mana_regeneration_time = pygame.time.get_ticks()
         self.health = 3
@@ -28,6 +29,7 @@ class Player:
         self.sword_rect = pygame.Rect(self.x, self.y, self.sword_width, self.sword_height)  # Initial sword rectangle
         self.last_hit_time = 0  # Time of the last hit by an enemy
         self.projectiles = []  # List to store active projectiles
+        self.projectile_sprite = pygame.image.load('sprites/laser.png').convert_alpha()
 
         
 
@@ -158,10 +160,12 @@ class Player:
     def check_sword_collisions(self, enemies):
         
         # Create a projectile when the player is attacking
-        if self.is_attacking:
+        if self.is_attacking and self.done_projectile == False:
             projectile = Projectile(self.x, self.y, self.direction)
             self.projectiles.append(projectile)
+            self.done_projectile = True
         if self.is_attacking == False: 
+            self.done_projectile = False
             return 
         for enemy in enemies:
             # Check for collisions with the sword's rectangle
@@ -189,7 +193,7 @@ class Player:
             from enemy import Enemy
             for enemy in Enemy.active_enemies:
                 if projectile.get_hitbox().colliderect(enemy.rect):
-                    enemy.health -= 1
+                    enemy.health -= 50
                     if enemy.health <= 0:
                         Enemy.active_enemies.remove(enemy)
                     self.projectiles.remove(projectile)
@@ -202,8 +206,10 @@ class Player:
       for projectile in self.projectiles:
         rect = pygame.Rect(projectile.x, projectile.y, projectile.width, projectile.height)
         adjusted_rect = camera.apply_offset(rect)
-        pygame.draw.rect(screen, (255, 0, 0), adjusted_rect)
-
+        scaled_image = pygame.transform.scale(self.projectile_sprite, (projectile.width, projectile.height))
+        scaled_image = pygame.transform.rotate(scaled_image, projectile.rotation)
+        # pygame.draw.rect(screen, (255, 0, 0), adjusted_rect)
+        screen.blit(scaled_image, adjusted_rect)
 
     def is_out_of_bounds(self, projectile):
         pass  # add later
@@ -234,30 +240,30 @@ class Player:
                 self.mana += 1
             self.last_mana_regeneration_time = current_time
     
-    def render_mana_bar(self, screen):
-        # Dimensions and positions of the bar 
-        bar_width = 200  
-        bar_height = 20   
-        x_position = 10  
-        y_position = 60
-
-        # Calculate the width of the filled portion based on the player's current mana
-        fill_width = (self.mana / self.max_mana) * bar_width
-
-        # Draw the background of the mana bar 
-        pygame.draw.rect(screen, (150, 150, 150), (x_position, y_position, bar_width, bar_height))
-
-        # Draw the filled portion of the mana bar on top of the empty part of mana bar 
-        pygame.draw.rect(screen, (0, 0, 255), (x_position, y_position, fill_width, bar_height))
 
 class Projectile:
     def __init__(self, x, y, direction, speed=5):
-        self.x = x
-        self.y = y
+        if direction == 'left':
+            self.x = x - 140
+            self.y = y - 40
+            self.rotation = 180
+        elif direction == 'up':
+            self.y = y - 140
+            self.x = x - 45
+            self.rotation = 90
+        elif direction == 'down':
+            self.y = y + 20
+            self.x = x - 80
+            self.rotation = 270
+        else:
+            self.x = x
+            self.y = y - 40
+            self.rotation = 0
         self.direction = direction
         self.speed = speed
-        self.width = 20
-        self.height = 20
+        self.width = 256
+        self.height = 202
+        self.transformed_rect = (self.x, self.y, self.width, self.height)
 
     def update(self):
         if self.direction == 'right':
@@ -270,8 +276,8 @@ class Projectile:
             self.y += self.speed
 
     
-    def get_hitbox(self):
-        return pygame.Rect(self.x, self.y, self.width, self.height)
+    def get_hitbox(self): 
+      return pygame.Rect(self.x - 40, self.y, self.width - 40, self.height -80)
 
 
                            
