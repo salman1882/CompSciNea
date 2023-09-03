@@ -1,6 +1,7 @@
 import pygame
+import random
+from upgrades import load_upgrades 
 from settings import TILE_SIZE
-
 class Player:
     attack_duration = 300
     attack_cooldown_duration = 750
@@ -9,7 +10,17 @@ class Player:
     def __init__(self, x, y, speed, width, height):
         self.mana = 50
         self.max_mana = 50
+        self.experience_scaling = 1.35
+        self.base_experience_requirement = 100
         self.last_mana_regeneration_time = pygame.time.get_ticks()
+        self.experience = 0
+        self.level = 0
+        self.mana_regen_rate = 1
+        self.available_upgrades = []
+        self.need_to_choose_upgrade = False
+        self.aquired_upgrades = []
+        self.upgrades = load_upgrades(self)
+        self.max_health = 3 
         self.health = 3
         self.x = x
         self.y = y
@@ -31,6 +42,46 @@ class Player:
         self.projectiles = []  # List to store active projectiles
         self.projectile_sprite = pygame.image.load('sprites/laser.png').convert_alpha()
 
+
+    def add_experience(self, exp):
+        self.experience += exp 
+        if (self.experience >= (self.base_experience_requirement+ (self.level*self.base_experience_requirement*(self.experience_scaling**self.level)))):
+             self.level_up()
+
+    def level_up(self):
+        self.level += 1 
+
+        # Count the amount of total rarities
+        total_raffle = 0
+        for upg in self.upgrades.values():
+            total_raffle += upg.rarity
+        upgrades_found = []
+        running_raffle = 0
+        while len(upgrades_found) < 3:
+            result = random.uniform(0,total_raffle)
+            for upg in self.upgrades.values():              
+                result -= upg.rarity
+                if result <= 0:
+                    if upg.is_repeatable:
+                        upgrades_found.append(upg)
+                        break
+                    elif self.aquired_upgrades.count(upg):
+                        break
+                    else: 
+                        upgrades_found.append(upg)
+                        break
+        self.available_upgrades = upgrades_found
+        self.need_to_choose_upgrade = True
+
+    def aquire_upgrade(self, upgrade_name):
+        if list(self.upgrades.keys()).count(upgrade_name):
+
+            if not (self.upgrades.get(upgrade_name).is_repeatable):
+                self.aquired_upgrades.append(self.upgrades.get(upgrade_name))
+            self.upgrades.get(upgrade_name).effect(self)
+
+        else:
+            print("Error: upgrade: |" + upgrade_name + "| is not found.")
         
 
 
@@ -103,6 +154,9 @@ class Player:
            if self.rect.colliderect(enemy.rect):
              self.last_hit_time = current_time
              self.health -= 1
+             if self.health <= 0:
+               Title_screen_Active = True
+               pygame.event.post(pygame.event.Event(pygame.QUIT))
              knockback_distance = 100
             
              # Calculate the vector from the enemy to the player
@@ -181,7 +235,7 @@ class Player:
         top_x = 10
         top_y = 32
 
-        for i in range(3):
+        for i in range(self.max_health):
             color = pygame.Color('black') if i >= self.health else pygame.Color('red')
             pygame.draw.rect(screen, color, (top_x + i * (square_size + spacing), top_y, square_size, square_size))
 
@@ -237,7 +291,7 @@ class Player:
         current_time = pygame.time.get_ticks()
         if current_time - self.last_mana_regeneration_time >= 1000:
             if self.mana < self.max_mana:
-                self.mana += 1
+                self.mana += self.mana_regen_rate
             self.last_mana_regeneration_time = current_time
     
 

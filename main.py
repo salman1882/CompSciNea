@@ -21,7 +21,7 @@ camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
 # load sprites
 sprite_sheet_character = pygame.image.load('sprites/player.png').convert_alpha()
 sprite_sheet = spritesheet.SpriteSheet(sprite_sheet_character)
-
+sprite_sheet_upgrades = pygame.image.load("sprites/upgrades.png").convert_alpha()
 background_image = pygame.image.load('sprites/ground.png').convert_alpha()
 water = pygame.image.load('sprites/water.png').convert()
 #scaled_background = pygame.transform.scale(background_image,3)
@@ -74,7 +74,9 @@ title_screen = TitleScreen(screen)
 title_screen_active = True
 
 while title_screen_active:
+    title_screen.draw_background()
     title_screen.draw()
+    
     pygame.display.update()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -86,6 +88,33 @@ while title_screen_active:
 last_fireball_time = 0
 running = True
 while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+            break
+
+    keys = pygame.key.get_pressed()
+
+    if player.need_to_choose_upgrade:
+        screen.fill((255, 255, 255))
+        for i in range(3):
+            upgrade_to_draw = player.available_upgrades[i]
+            source_rect = pygame.Rect(32*upgrade_to_draw.icon_ID,0,32,32)
+            screen.blit(sprite_sheet_upgrades, (i*48,0), source_rect)
+            screen.blit(sprite_sheet_upgrades, (i*48,48), pygame.Rect(32*i,32,32,32))
+        pygame.display.update()
+
+        if keys[pygame.K_1]:
+            player.aquire_upgrade(player.available_upgrades[0].name)
+        elif keys[pygame.K_2]:
+            player.aquire_upgrade(player.available_upgrades[1].name)
+        elif keys[pygame.K_3]:
+            player.aquire_upgrade(player.available_upgrades[2].name)
+
+        if keys[pygame.K_1] or keys[pygame.K_2] or keys[pygame.K_3]:
+            player.need_to_choose_upgrade = False
+        else:
+            continue
     player.handle_collisions(Enemy.active_enemies, walls)
 
     for wall in walls:
@@ -94,13 +123,11 @@ while running:
 
     player.update_projectiles()
 
+    if keys[pygame.K_l]:
+        player.add_experience(10)
+        print(player.experience)
 
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-    keys = pygame.key.get_pressed()
     current_time = pygame.time.get_ticks()
     if keys[pygame.K_2] and player.mana >= 20 and current_time - last_fireball_time > 2000:
         fireball = Fireball(player.x, player.y, player.direction)
@@ -168,12 +195,14 @@ while running:
         enemy.move_towards_player(player, walls)
         enemy.draw(screen, camera)
     
-    # Draw the projectile 
+    # Draw the projectile as
     player.render_projectiles(screen, camera)
     Enemy.display_wave_number(screen, font)
     player.draw_health(screen, SCREEN_WIDTH)
     pygame.display.update()
-    for enemey in Enemy.active_enemies:
-      print(enemy.health)
+    if player.health <= 0:
+        break
+   # for enemey in Enemy.active_enemies:
+    #  print(enemy.health)
     clock.tick(60)
 pygame.quit() 
